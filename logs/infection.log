@@ -1,0 +1,130 @@
+Escaped mutants:
+================
+
+1) /home/stddev/phpunit.dd/Courses/BatchFileProcessor.php:39    [M] ArrayItemRemoval
+
+--- Original
++++ New
+@@ @@
+     {
+         $save_bucket = [];
+         $idc = $batch->getHeadingIndices(self::HEADINGS);
+-        $content = $batch->getSortedContentWithDateTime($idc, ['STARTDATE', 'ENROLMENTENDDATE']);
++        $content = $batch->getSortedContentWithDateTime($idc, ['ENROLMENTENDDATE']);
+         $provider_ids = [];
+         $provider_names = [];
+         $errors = [];
+
+
+2) /home/stddev/phpunit.dd/Courses/BatchFileProcessor.php:55    [M] UnwrapTrim
+
+--- Original
++++ New
+@@ @@
+         foreach ($content as $idx => $row) {
+             $course = CoursePreviewItem::loadFromFile(['code' => $row['PROGRAMCODE'], 'title' => $row['PROGRAMNAME'], 'start_date' => $row['STARTDATE'], 'end_date' => $row['ENROLMENTENDDATE']]);
+             $provider_ids[$idx] = intval($row['PROVIDERID']);
+-            $provider_names[$idx] = filter_var(strtoupper(trim($row['PROVIDERNAME'])), FILTER_SANITIZE_STRING);
++            $provider_names[$idx] = filter_var(strtoupper($row['PROVIDERNAME']), FILTER_SANITIZE_STRING);
+             $errors[$idx] = implode(", ", $course->validate(true));
+             $save_bucket[] = $course;
+         }
+
+
+3) /home/stddev/phpunit.dd/Courses/BatchFileProcessor.php:64    [M] Concat
+
+--- Original
++++ New
+@@ @@
+         $match_providers = $this->matchProviders($provider_ids, $provider_names);
+         foreach ($errors as $idx => $e) {
+             if (is_null($match_providers[$idx])) {
+-                $errors[$idx] = !empty($e) ? "No provider matched, " . $e : "No provider matched";
++                $errors[$idx] = !empty($e) ? $e . "No provider matched, " : "No provider matched";
+             } else {
+                 $save_bucket[$idx]->addProvider($match_providers[$idx]);
+             }
+
+
+4) /home/stddev/phpunit.dd/Courses/BatchFileProcessor.php:64    [M] ConcatOperandRemoval
+
+--- Original
++++ New
+@@ @@
+         $match_providers = $this->matchProviders($provider_ids, $provider_names);
+         foreach ($errors as $idx => $e) {
+             if (is_null($match_providers[$idx])) {
+-                $errors[$idx] = !empty($e) ? "No provider matched, " . $e : "No provider matched";
++                $errors[$idx] = !empty($e) ? $e : "No provider matched";
+             } else {
+                 $save_bucket[$idx]->addProvider($match_providers[$idx]);
+             }
+
+
+5) /home/stddev/phpunit.dd/Courses/BatchFileProcessor.php:64    [M] ConcatOperandRemoval
+
+--- Original
++++ New
+@@ @@
+         $match_providers = $this->matchProviders($provider_ids, $provider_names);
+         foreach ($errors as $idx => $e) {
+             if (is_null($match_providers[$idx])) {
+-                $errors[$idx] = !empty($e) ? "No provider matched, " . $e : "No provider matched";
++                $errors[$idx] = !empty($e) ? "No provider matched, " : "No provider matched";
+             } else {
+                 $save_bucket[$idx]->addProvider($match_providers[$idx]);
+             }
+
+
+6) /home/stddev/phpunit.dd/Courses/BatchFileProcessor.php:66    [M] MethodCallRemoval
+
+--- Original
++++ New
+@@ @@
+             if (is_null($match_providers[$idx])) {
+                 $errors[$idx] = !empty($e) ? "No provider matched, " . $e : "No provider matched";
+             } else {
+-                $save_bucket[$idx]->addProvider($match_providers[$idx]);
++                
+             }
+         }
+         return ['errors' => $errors, 'has_errors' => !empty(implode('', $errors)), 'courses' => $save_bucket, 'providers' => $match_providers];
+
+
+7) /home/stddev/phpunit.dd/Courses/BatchFileProcessor.php:92    [M] UnwrapTrim
+
+--- Original
++++ New
+@@ @@
+         $match_names = [];
+         foreach ($match as $item) {
+             $match_ids[intval($item['id'])] = $item;
+-            $match_names[strtoupper(trim($item['name']))] = $item;
++            $match_names[strtoupper($item['name'])] = $item;
+         }
+         $found = [];
+         foreach (array_keys($provider_ids) as $idx) {
+
+
+Timed Out mutants:
+==================
+
+Skipped mutants:
+================
+
+Not Covered mutants:
+====================
+
+1) /home/stddev/phpunit.dd/Courses/BatchFileProcessor.php:81    [M] LogicalAnd
+
+--- Original
++++ New
+@@ @@
+     private function matchProviders($provider_ids, $provider_names)
+     {
+         // @codeCoverageIgnoreStart
+-        if (empty($provider_ids) && empty($provider_names)) {
++        if (empty($provider_ids) || empty($provider_names)) {
+             return [];
+         }
+         // @codeCoverageIgnoreEnd

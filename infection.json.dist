@@ -1,0 +1,22 @@
+{
+    "source": {
+        "directories": [
+            "Courses"
+        ],
+        "excludes": [
+            "CourseItem.php",
+            "CoursePreviewItem.php",
+            "CourseRepository.php",
+            "BatchFileReader.php",
+            "ValueFilter.php"
+        ]
+    },
+    "mutators": {
+        "@default": true
+    },
+    "logs": {
+        "text": "logs/infection.log",
+        "summary": "logs/summary.log",
+        "perMutator": "logs/per-mutator.md"
+    }
+}
